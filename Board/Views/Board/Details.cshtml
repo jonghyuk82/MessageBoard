@@ -1,0 +1,125 @@
+﻿@model Board.Models.Post
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+
+<style>
+    .board-expand {
+        background-color: #fff;
+        color: #000;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: .5px solid #d5d3d3;
+        border-radius: 5px;
+        text-align: left;
+        outline: none;
+        font-size: 14px;
+        transition: .5s;
+    }
+
+    .active.board-expand {
+        background-color: #f2f2f2;
+    }
+
+        .board-expand:hover,
+        .active.board-expand:hover {
+            background-color: #d5d3d3;
+        }
+
+    .board-expand-panel {
+        padding: 20px;
+        display: none;
+        background-color: #fff;
+        overflow: hidden;
+        box-sizing: border-box;
+        transition: all .5s linear;
+        font-size: 16px;
+        -moz-transition: all .5s linear;
+        -webkit-transition: all .5s linear;
+        -o-transition: all .5s linear;
+    }
+</style>
+
+
+
+<h2>@Html.DisplayFor(model => model.Title)</h2>
+
+<div>   
+    <hr />
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-12">
+                <button class="board-expand" style="width:100%">
+                    <div class="col-md-9" style="font-size: 16px">
+                        @Html.DisplayFor(model => model.User.FullName)
+                    </div>
+                    <div class="col-md-3">
+                        @Model.RegisterDate.ToString("MMM dd, yyyy hh:mm:ss tt")
+                    </div>
+                </button>
+                <div class="board-expand-panel">
+                    @Html.DisplayFor(model => model.Message)
+                    <div class="col-md-12">
+                        @if (Model.PostFile.Count > 0)
+                        {
+                            <label>File(s): </label>
+                        }
+                        
+                        @foreach (var item in Model.PostFile)
+                        {                                
+                            <a href="@Url.Content("~/UploadFiles/" + item.FileName)" class="btn btn-link">
+                                @item.FileName
+                            </a>                                
+                        }
+                       
+                    </div>
+                </div>
+            </div>
+            @foreach (var item in Model.SubPost)
+            {
+                <div class="col-md-12">
+                    <button class="board-expand">
+                        <div class="col-md-9" style="font-size: 16px">
+                            @item.User.FullName
+                        </div>
+                        <div class="col-md-3">
+                            @item.RegisterDate.ToString("MMM dd, yyyy hh:mm:ss tt")
+                        </div>
+                    </button>
+                    <div class="board-expand-panel">
+                        @item.Message
+                        <div class="col-md-12">
+                          @if (item.SubPostFile.Count > 0)
+                          {
+                            <label>File(s): </label>
+                          }
+                            @foreach (var sub in item.SubPostFile)
+                            {                                 
+                                <a href="@Url.Content("~/UploadFiles/" + sub.FileName)" class="btn btn-link">
+                                    @sub.FileName
+                                </a>                                    
+                            }
+                            
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <br />
+        <div class="col-md-12">
+            @Html.ActionLink("Reply", "Reply", new { id = Model.ID }, new { @class = "btn btn-success" })            
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+        </div>
+
+    </div>
+</div>
+
+<script src="~/Scripts/script.js"></script>
+
+

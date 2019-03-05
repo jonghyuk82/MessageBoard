@@ -1,0 +1,114 @@
+﻿@model IEnumerable<Board.Models.Post>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class="btn btn-info"})
+</p>
+<table class="table">
+    <tr>
+        <th>
+            <label>Title</label>
+        </th>
+        <th>
+            <label>Author</label>
+        </th>
+        <th>
+            <label>Due Date</label>
+        </th>
+        <th>
+            <label>Status</label>
+        </th>
+        <th>
+            <label>Importance</label>
+        </th>
+        <th>
+            <label>Priority</label>
+        </th>    
+        <th></th>
+    </tr>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+
+            <td>
+                @if (item.UserID == Convert.ToInt32(Session["LoginID"].ToString()) || Session["LoginRole"].ToString() == "3")
+                {
+                    using (Html.BeginForm("UpdateStatus", "Board", FormMethod.Post))
+                    {
+                        @Html.Hidden("postID", item.ID)                        
+                        @Html.DropDownList("StatusID", null, item.Status.Description, new { @class = "form-control", onchange = "this.form.submit();" })
+                    }
+                }
+                else
+                {
+
+                    @Html.DisplayFor(modelItem => item.Status.Description)
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Importance.Description)
+            </td>
+            <td>
+                @if (Session["LoginRole"].ToString() == "3")
+                {
+                    using (Html.BeginForm("UpdatePriority", "Board", FormMethod.Post))
+                    {
+                        @Html.Hidden("postID", item.ID)
+                        @Html.DropDownList("PriorityID", null, item.Priority.Description, new { @class="form-control", onchange="this.form.submit();"})
+                        
+                    }
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Priority.Description)
+                }
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-info" })
+                @*@Html.ActionLink("View", "ViewDetail", new { id=item.ID})*@
+
+                @if (item.UserID == Convert.ToInt32(Session["LoginID"].ToString()))
+                {
+                    
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class = "btn btn-danger" })
+                    <span> </span>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-success" })
+                }
+                else if (item.UserID == Convert.ToInt32(Session["LoginID"].ToString()) && Session["LoginRole"].ToString() == "3")
+                {
+                    
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class="btn btn-danger"})
+                    <span> </span>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-success" })
+                }
+                else if (Session["LoginRole"].ToString() == "3")
+                {
+                   
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class = "btn btn-danger" })
+                }
+
+            </td>
+
+        </tr>
+    }
+}
+
+
+</table>
